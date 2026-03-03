@@ -334,12 +334,24 @@ public class DialogScreen extends Screen {
         dialogBoxX = (width - dialogBoxWidth) / 2;
         dialogBoxY = height - dialogBoxHeight - 20;
 
-        // 初始化查看历史按钮 (位于对话框右下角)
-        int historyButtonWidth = 64;
-        int historyButtonHeight = 64;
-        int historyButtonPadding = 20;
-        int historyButtonX = dialogBoxX + dialogBoxWidth - historyButtonWidth - historyButtonPadding; // 修改X坐标
-        int historyButtonY = dialogBoxY + dialogBoxHeight - historyButtonHeight - historyButtonPadding; // 修改Y坐标
+        // Button size
+        int buttonWidth = 48;
+        int buttonHeight = 48;
+        int spacing = 6;
+
+        // Move them to the RIGHT of the dialog box
+        int buttonsX = dialogBoxX + dialogBoxWidth;
+
+        // Center vertically relative to dialog
+        int centerY = dialogBoxY + dialogBoxHeight / 2;
+
+        // AutoPlay on top
+        int autoPlayButtonX = buttonsX;
+        int autoPlayButtonY = centerY - buttonHeight - spacing / 2;
+
+        // History below it
+        int historyButtonX = buttonsX;
+        int historyButtonY = centerY + spacing / 2;
 
         // history sprites (store to field too)
         historySpritesField = new WidgetSprites(
@@ -352,20 +364,14 @@ public class DialogScreen extends Screen {
         this.viewHistoryButton = new GenericButton(
                 historyButtonX,
                 historyButtonY,
-                historyButtonWidth,
-                historyButtonHeight,
+                buttonWidth,
+                buttonHeight,
                 historySpritesField,
                 button -> toggleHistoryScreen(),
                 Component.empty()
         );
 
         this.addRenderableWidget(this.viewHistoryButton);
-
-        // 初始化自动播放按钮 (位于历史记录按钮左侧)
-        int autoPlayButtonWidth = 64;
-        int autoPlayButtonHeight = 64;
-        int autoPlayButtonX = dialogBoxX + dialogBoxWidth - historyButtonWidth - historyButtonPadding - autoPlayButtonWidth - historyButtonPadding; // 修改X坐标
-        int autoPlayButtonY = dialogBoxY + dialogBoxHeight - autoPlayButtonHeight - historyButtonPadding; // 修改Y坐标
 
         // autoplay sprites: normal (play) and active (playing)
         autoPlayPlaySprites = new WidgetSprites(
@@ -388,8 +394,8 @@ public class DialogScreen extends Screen {
         this.autoPlayButton = new GenericButton(
                 autoPlayButtonX,
                 autoPlayButtonY,
-                autoPlayButtonWidth,
-                autoPlayButtonHeight,
+                buttonWidth,
+                buttonHeight,
                 initialAutoPlaySprites,
                 button -> toggleAutoPlay(),
                 Component.empty()

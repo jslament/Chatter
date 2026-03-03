@@ -35,13 +35,13 @@ public class Config {
         BUILDER.comment("对话框UI配置").push("ui");
         DIALOG_BOX_WIDTH = BUILDER
                 .comment("对话框宽度")
-                .define("dialogBoxWidth", 384);
+                .define("dialogBoxWidth", 288);
         DIALOG_BOX_HEIGHT = BUILDER
                 .comment("对话框高度")
-                .define("dialogBoxHeight", 256);
+                .define("dialogBoxHeight", 192);
         DIALOG_BOX_PADDING = BUILDER
                 .comment("对话框内边距")
-                .define("dialogBoxPadding", 54);
+                .define("dialogBoxPadding", 41);
         DIALOG_TEXT_COLOR = BUILDER
                 .comment("对话文本默认颜色 (ARGB格式)")
                 .define("dialogTextColor", 0xFFFFFFFF);
