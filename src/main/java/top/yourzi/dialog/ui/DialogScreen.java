@@ -142,6 +142,11 @@ public class DialogScreen extends Screen {
     private Button viewHistoryButton; // 查看历史按钮
     private Button autoPlayButton; // 自动播放按钮
 
+    // sprite sets for autoplay (and history if you want to keep them accessible)
+    private WidgetSprites autoPlayPlaySprites;
+    private WidgetSprites autoPlayPlayingSprites;
+    private WidgetSprites historySpritesField; // optional: store history sprites here
+
     // 背景图片相关
     private BackgroundImageDisplayData backgroundImageDisplayData;
 
@@ -330,34 +335,60 @@ public class DialogScreen extends Screen {
         dialogBoxY = height - dialogBoxHeight - 20;
 
         // 初始化查看历史按钮 (位于对话框右下角)
-        int historyButtonWidth = 20;
-        int historyButtonHeight = 20;
-        int historyButtonPadding = 5;
+        int historyButtonWidth = 64;
+        int historyButtonHeight = 64;
+        int historyButtonPadding = 20;
         int historyButtonX = dialogBoxX + dialogBoxWidth - historyButtonWidth - historyButtonPadding; // 修改X坐标
         int historyButtonY = dialogBoxY + dialogBoxHeight - historyButtonHeight - historyButtonPadding; // 修改Y坐标
 
-        this.viewHistoryButton = Button.builder(Component.literal("▲"), (button) -> {
-            toggleHistoryScreen();
-        }).bounds(historyButtonX, historyButtonY, historyButtonWidth, historyButtonHeight).build();
+        WidgetSprites historySprites = new WidgetSprites(
+                ResourceLocation.fromNamespaceAndPath(Dialog.MODID, "widget/history"),
+                ResourceLocation.fromNamespaceAndPath(Dialog.MODID, "widget/history"),
+                ResourceLocation.fromNamespaceAndPath(Dialog.MODID, "widget/history_highlight"),
+                ResourceLocation.fromNamespaceAndPath(Dialog.MODID, "widget/history_highlight")
+        );
+
+        this.viewHistoryButton = new GenericButton(
+                historyButtonX,
+                historyButtonY,
+                historyButtonWidth,
+                historyButtonHeight,
+                historySprites,
+                button -> toggleHistoryScreen(),
+                Component.empty()
+        );
+
         this.addRenderableWidget(this.viewHistoryButton);
 
         // 初始化自动播放按钮 (位于历史记录按钮左侧)
-        int autoPlayButtonWidth = 20;
-        int autoPlayButtonHeight = 20;
+        int autoPlayButtonWidth = 64;
+        int autoPlayButtonHeight = 64;
         int autoPlayButtonX = dialogBoxX + dialogBoxWidth - historyButtonWidth - historyButtonPadding - autoPlayButtonWidth - historyButtonPadding; // 修改X坐标
         int autoPlayButtonY = dialogBoxY + dialogBoxHeight - autoPlayButtonHeight - historyButtonPadding; // 修改Y坐标
 
-        this.autoPlayButton = Button.builder(Component.literal("▶"), (button) -> {
-            toggleAutoPlay();
-        }).bounds(autoPlayButtonX, autoPlayButtonY, autoPlayButtonWidth, autoPlayButtonHeight).build();
+        WidgetSprites autoPlaySprites = new WidgetSprites(
+                ResourceLocation.fromNamespaceAndPath(Dialog.MODID, "widget/autoplay"),
+                ResourceLocation.fromNamespaceAndPath(Dialog.MODID, "widget/autoplay"),
+                ResourceLocation.fromNamespaceAndPath(Dialog.MODID, "widget/autoplay_highlight"),
+                ResourceLocation.fromNamespaceAndPath(Dialog.MODID, "widget/autoplay_highlight")
+        );
+
+        this.autoPlayButton = new GenericButton(
+                autoPlayButtonX,
+                autoPlayButtonY,
+                autoPlayButtonWidth,
+                autoPlayButtonHeight,
+                autoPlaySprites,
+                button -> toggleAutoPlay(),
+                Component.empty()
+        );
+
         this.addRenderableWidget(this.autoPlayButton);
-        updateAutoPlayButtonText(); // 初始化按钮文本
         
         // 如果此对话条目有选项，预先停止自动播放
         if (dialogEntry.hasOptions()) {
             if (DialogManager.isAutoPlaying()) {
                 DialogManager.stopAutoPlay();
-                updateAutoPlayButtonText(); // 更新按钮文本以反映自动播放已停止
             }
         }
         this.optionButtonsCreated = false; // 初始化选项按钮创建标记
@@ -553,7 +584,7 @@ public class DialogScreen extends Screen {
         }
 
         // 渲染对话框背景
-        String backgroundImagePath = "textures/dialog_background/background.png";
+        String backgroundImagePath = "textures/dialog_background/dialogue.png";
         if (backgroundImagePath != null && !backgroundImagePath.isEmpty()) {
             try {
                 ResourceLocation dialogBgRl = ResourceLocation.fromNamespaceAndPath(Dialog.MODID, backgroundImagePath);
@@ -726,7 +757,6 @@ public class DialogScreen extends Screen {
         // 如果按下Ctrl键快速跳过，则关闭自动播放
         if (isCtrlPressed && DialogManager.isAutoPlaying()) {
             DialogManager.stopAutoPlay();
-            updateAutoPlayButtonText();
         }
 
         if (isCtrlPressed && !dialogEntry.hasOptions()) {
@@ -774,7 +804,6 @@ public class DialogScreen extends Screen {
         if (textFullyDisplayed && !dialogEntry.hasOptions() && (keyCode == GLFW.GLFW_KEY_SPACE)) {
             if (DialogManager.isAutoPlaying()) {
                 DialogManager.stopAutoPlay();
-                updateAutoPlayButtonText();
             }
             if (dialogEntry.getCommand() != null && !dialogEntry.getCommand().isEmpty()) {
                 DialogManager.getInstance().executeCommands(this.getMinecraft().player, dialogEntry.getCommand());
@@ -787,7 +816,6 @@ public class DialogScreen extends Screen {
         if (!textFullyDisplayed && (keyCode == GLFW.GLFW_KEY_SPACE)) {
             if (DialogManager.isAutoPlaying()) {
                 DialogManager.stopAutoPlay();
-                updateAutoPlayButtonText();
             }
             textFullyDisplayed = true;
             currentCharIndex = dialogEntry.getText(Minecraft.getInstance().level.registryAccess(), playerName).getString().length();
@@ -851,7 +879,6 @@ public class DialogScreen extends Screen {
         // 如果点击，则关闭自动播放
         if (DialogManager.isAutoPlaying()) {
             DialogManager.stopAutoPlay();
-            updateAutoPlayButtonText();
         }
         if (super.mouseClicked(mouseX, mouseY, button)) {
             return true;
@@ -899,19 +926,11 @@ public class DialogScreen extends Screen {
 
     private void toggleAutoPlay() {
         DialogManager.setAutoPlaying(!DialogManager.isAutoPlaying());
-        updateAutoPlayButtonText();
-    }
-
-    private void updateAutoPlayButtonText() {
-        if (this.autoPlayButton != null) {
-            this.autoPlayButton.setMessage(Component.literal(DialogManager.isAutoPlaying() ? "⏸" : "▶"));
-        }
     }
 
     @Override
     public void tick() {
         super.tick();
-        updateAutoPlayButtonText(); 
 
 
     

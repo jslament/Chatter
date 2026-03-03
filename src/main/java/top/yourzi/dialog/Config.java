@@ -35,10 +35,10 @@ public class Config {
         BUILDER.comment("对话框UI配置").push("ui");
         DIALOG_BOX_WIDTH = BUILDER
                 .comment("对话框宽度")
-                .define("dialogBoxWidth", 224);
+                .define("dialogBoxWidth", 384);
         DIALOG_BOX_HEIGHT = BUILDER
                 .comment("对话框高度")
-                .define("dialogBoxHeight", 128);
+                .define("dialogBoxHeight", 256);
         DIALOG_BOX_PADDING = BUILDER
                 .comment("对话框内边距")
                 .define("dialogBoxPadding", 10);
