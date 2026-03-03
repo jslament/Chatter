@@ -382,12 +382,15 @@ public class DialogScreen extends Screen {
                 ResourceLocation.fromNamespaceAndPath(Dialog.MODID, "widget/autoplay_playing")
         );
 
+        // Use correct sprites based on current autoplay state
+        WidgetSprites initialAutoPlaySprites = DialogManager.isAutoPlaying() ? autoPlayPlayingSprites : autoPlayPlaySprites;
+
         this.autoPlayButton = new GenericButton(
                 autoPlayButtonX,
                 autoPlayButtonY,
                 autoPlayButtonWidth,
                 autoPlayButtonHeight,
-                autoPlayPlaySprites,
+                initialAutoPlaySprites,
                 button -> toggleAutoPlay(),
                 Component.empty()
         );
@@ -885,7 +888,17 @@ public class DialogScreen extends Screen {
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        // 如果点击，则关闭自动播放
+        // Check if click is on the autoplay button - if so, let the button handle it
+        if (this.autoPlayButton != null &&
+            mouseX >= this.autoPlayButton.getX() &&
+            mouseX <= this.autoPlayButton.getX() + this.autoPlayButton.getWidth() &&
+            mouseY >= this.autoPlayButton.getY() &&
+            mouseY <= this.autoPlayButton.getY() + this.autoPlayButton.getHeight()) {
+            // Let the super method handle the button click
+            return super.mouseClicked(mouseX, mouseY, button);
+        }
+
+        // 如果点击，则关闭自动播放 (but not if clicking the autoplay button)
         if (DialogManager.isAutoPlaying()) {
             DialogManager.stopAutoPlay();
         }

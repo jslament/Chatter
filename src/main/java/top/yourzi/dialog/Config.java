@@ -41,7 +41,7 @@ public class Config {
                 .define("dialogBoxHeight", 256);
         DIALOG_BOX_PADDING = BUILDER
                 .comment("对话框内边距")
-                .define("dialogBoxPadding", 10);
+                .define("dialogBoxPadding", 54);
         DIALOG_TEXT_COLOR = BUILDER
                 .comment("对话文本默认颜色 (ARGB格式)")
                 .define("dialogTextColor", 0xFFFFFFFF);
