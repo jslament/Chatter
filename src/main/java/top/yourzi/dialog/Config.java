@@ -28,7 +28,8 @@ public class Config {
     public static final ModConfigSpec.ConfigValue<Integer> AUTO_ADVANCE_DELAY; // 自动推进对话延迟 (毫秒)
     public static final ModConfigSpec.ConfigValue<Boolean> SHOW_SPEAKER_NAME; // 显示说话者名称
     public static final ModConfigSpec.ConfigValue<Integer> TEXT_ANIMATION_SPEED; // 文本逐字显示速度 (每秒字符数，0表示立即显示全部)
-    
+    public static final ModConfigSpec.ConfigValue<Integer> PUNCTUATION_PAUSE_DURATION; // 标点符号暂停时间 (毫秒)
+
     static {
         BUILDER.comment("对话系统配置").push("dialog");
 
@@ -72,6 +73,9 @@ public class Config {
         TEXT_ANIMATION_SPEED = BUILDER
                 .comment("文本逐字显示的速度（每秒字符数，设置为0则立即显示全部文本）")
                 .defineInRange("textAnimationSpeed", 20, 0, 1000);
+        PUNCTUATION_PAUSE_DURATION = BUILDER
+                .comment("在句号、感叹号、问号处暂停的时间（毫秒，设置为0则禁用）")
+                .defineInRange("punctuationPauseDuration", 300, 0, 5000);
         USE_CUSTOM_BUTTON_TEXTURE = BUILDER
                 .comment("是否使用自定义按钮纹理（否则使用Minecraft原版按钮纹理）")
                 .define("useCustomButtonTexture", true);

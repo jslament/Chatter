@@ -129,6 +129,7 @@ public class DialogScreen extends Screen {
     private int currentCharIndex = 0;
     private long lastCharTime = 0;
     private boolean textFullyDisplayed = false;
+    private long punctuationPauseEndTime = 0; // Track when punctuation pause should end
 
     // 快速跳过相关
     private int fastForwardCooldown = 0;
@@ -669,12 +670,36 @@ public class DialogScreen extends Screen {
                 if (lastCharTime == 0) { // 首次渲染或重置
                     lastCharTime = currentTime;
                 }
+
+                // Check if we're in a punctuation pause
+                boolean inPunctuationPause = false;
+                if (punctuationPauseEndTime > 0 && currentTime < punctuationPauseEndTime) {
+                    // Still pausing - don't advance characters
+                    inPunctuationPause = true;
+                } else if (punctuationPauseEndTime > 0) {
+                    // Pause finished, reset the timer
+                    punctuationPauseEndTime = 0;
+                    lastCharTime = currentTime; // Reset char timer after pause
+                }
+
                 // 计算每字符间隔时间 (毫秒)
                 long charInterval = (textAnimationSpeed > 0) ? (1000 / textAnimationSpeed) : 0;
                 
-                if (currentTime - lastCharTime >= charInterval) {
+                // Only advance characters if not in punctuation pause
+                if (!inPunctuationPause && currentTime - lastCharTime >= charInterval) {
                     currentCharIndex++;
                     lastCharTime = currentTime;
+
+                    // Check if current character is punctuation that should pause
+                    if (currentCharIndex <= rawText.length()) {
+                        char lastChar = rawText.charAt(currentCharIndex - 1);
+                        int pauseDuration = Config.PUNCTUATION_PAUSE_DURATION.get();
+                        if (pauseDuration > 0 && (lastChar == '.' || lastChar == '!' || lastChar == '?')) {
+                            // Start punctuation pause
+                            punctuationPauseEndTime = currentTime + pauseDuration;
+                        }
+                    }
+
                     if (currentCharIndex >= rawText.length()) {
                         textFullyDisplayed = true;
                         currentCharIndex = rawText.length(); // 确保索引不超过长度
@@ -838,6 +863,7 @@ public class DialogScreen extends Screen {
             textFullyDisplayed = true;
             currentCharIndex = dialogEntry.getText(Minecraft.getInstance().level.registryAccess(), playerName).getString().length();
             lastCharTime = System.currentTimeMillis();
+            punctuationPauseEndTime = 0; // 重置标点符号暂停
             return true;
         }
 
@@ -926,6 +952,7 @@ public class DialogScreen extends Screen {
                     textFullyDisplayed = true;
                     currentCharIndex = dialogEntry.getText(Minecraft.getInstance().level.registryAccess(), playerName).getString().length();
                     lastCharTime = 0; // 重置动画或自动播放的时间
+                    punctuationPauseEndTime = 0; // 重置标点符号暂停
                     return true; // 消费点击事件
                 } else {
                     // 文本已完全显示
