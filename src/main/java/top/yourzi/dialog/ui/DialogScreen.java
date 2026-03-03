@@ -341,7 +341,8 @@ public class DialogScreen extends Screen {
         int historyButtonX = dialogBoxX + dialogBoxWidth - historyButtonWidth - historyButtonPadding; // 修改X坐标
         int historyButtonY = dialogBoxY + dialogBoxHeight - historyButtonHeight - historyButtonPadding; // 修改Y坐标
 
-        WidgetSprites historySprites = new WidgetSprites(
+        // history sprites (store to field too)
+        historySpritesField = new WidgetSprites(
                 ResourceLocation.fromNamespaceAndPath(Dialog.MODID, "widget/history"),
                 ResourceLocation.fromNamespaceAndPath(Dialog.MODID, "widget/history"),
                 ResourceLocation.fromNamespaceAndPath(Dialog.MODID, "widget/history_highlight"),
@@ -353,7 +354,7 @@ public class DialogScreen extends Screen {
                 historyButtonY,
                 historyButtonWidth,
                 historyButtonHeight,
-                historySprites,
+                historySpritesField,
                 button -> toggleHistoryScreen(),
                 Component.empty()
         );
@@ -366,11 +367,19 @@ public class DialogScreen extends Screen {
         int autoPlayButtonX = dialogBoxX + dialogBoxWidth - historyButtonWidth - historyButtonPadding - autoPlayButtonWidth - historyButtonPadding; // 修改X坐标
         int autoPlayButtonY = dialogBoxY + dialogBoxHeight - autoPlayButtonHeight - historyButtonPadding; // 修改Y坐标
 
-        WidgetSprites autoPlaySprites = new WidgetSprites(
+        // autoplay sprites: normal (play) and active (playing)
+        autoPlayPlaySprites = new WidgetSprites(
                 ResourceLocation.fromNamespaceAndPath(Dialog.MODID, "widget/autoplay"),
                 ResourceLocation.fromNamespaceAndPath(Dialog.MODID, "widget/autoplay"),
                 ResourceLocation.fromNamespaceAndPath(Dialog.MODID, "widget/autoplay_highlight"),
                 ResourceLocation.fromNamespaceAndPath(Dialog.MODID, "widget/autoplay_highlight")
+        );
+
+        autoPlayPlayingSprites = new WidgetSprites(
+                ResourceLocation.fromNamespaceAndPath(Dialog.MODID, "widget/autoplay_playing"),
+                ResourceLocation.fromNamespaceAndPath(Dialog.MODID, "widget/autoplay_playing"),
+                ResourceLocation.fromNamespaceAndPath(Dialog.MODID, "widget/autoplay_playing"), // hover can reuse same if you don't have highlight
+                ResourceLocation.fromNamespaceAndPath(Dialog.MODID, "widget/autoplay_playing")
         );
 
         this.autoPlayButton = new GenericButton(
@@ -378,7 +387,7 @@ public class DialogScreen extends Screen {
                 autoPlayButtonY,
                 autoPlayButtonWidth,
                 autoPlayButtonHeight,
-                autoPlaySprites,
+                autoPlayPlaySprites,
                 button -> toggleAutoPlay(),
                 Component.empty()
         );
@@ -926,6 +935,29 @@ public class DialogScreen extends Screen {
 
     private void toggleAutoPlay() {
         DialogManager.setAutoPlaying(!DialogManager.isAutoPlaying());
+
+        // remove old widget
+        if (this.children().contains(this.autoPlayButton)) {
+            this.removeWidget(this.autoPlayButton);
+        }
+
+        // pick new sprites
+        WidgetSprites newSprites = DialogManager.isAutoPlaying() ? autoPlayPlayingSprites : autoPlayPlaySprites;
+
+        // recreate button (preserve x/y/size)
+        int x = this.autoPlayButton.getX();
+        int y = this.autoPlayButton.getY();
+        int w = this.autoPlayButton.getWidth();
+        int h = this.autoPlayButton.getHeight();
+
+        this.autoPlayButton = new GenericButton(
+                x, y, w, h,
+                newSprites,
+                button -> toggleAutoPlay(),
+                Component.empty()
+        );
+
+        this.addRenderableWidget(this.autoPlayButton);
     }
 
     @Override
