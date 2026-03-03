@@ -65,7 +65,7 @@ public class Config {
                 .define("isPauseScreen", false);
         AUTO_ADVANCE_DELAY = BUILDER
                 .comment("自动推进对话的延迟时间（毫秒）")
-                .define("autoAdvanceDelay", 200);
+                .define("autoAdvanceDelay", 2000);
         SHOW_SPEAKER_NAME = BUILDER
                 .comment("是否显示说话者的名称")
                 .define("showSpeakerName", true);
@@ -74,7 +74,7 @@ public class Config {
                 .defineInRange("textAnimationSpeed", 20, 0, 1000);
         USE_CUSTOM_BUTTON_TEXTURE = BUILDER
                 .comment("是否使用自定义按钮纹理（否则使用Minecraft原版按钮纹理）")
-                .define("useCustomButtonTexture", false);
+                .define("useCustomButtonTexture", true);
         BUILDER.pop();
     }
     
