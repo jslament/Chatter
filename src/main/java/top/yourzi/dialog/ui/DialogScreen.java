@@ -333,21 +333,23 @@ public class DialogScreen extends Screen {
         int historyButtonWidth = 20;
         int historyButtonHeight = 20;
         int historyButtonPadding = 5;
+        int historyButtonX = dialogBoxX + dialogBoxWidth - historyButtonWidth - historyButtonPadding; // 修改X坐标
+        int historyButtonY = dialogBoxY + dialogBoxHeight - historyButtonHeight - historyButtonPadding; // 修改Y坐标
+
         this.viewHistoryButton = Button.builder(Component.literal("▲"), (button) -> {
             toggleHistoryScreen();
-        }).bounds(dialogBoxX + dialogBoxWidth - historyButtonWidth - historyButtonPadding, 
-                  dialogBoxY + dialogBoxHeight - historyButtonHeight - historyButtonPadding, 
-                  historyButtonWidth, historyButtonHeight).build();
+        }).bounds(historyButtonX, historyButtonY, historyButtonWidth, historyButtonHeight).build();
         this.addRenderableWidget(this.viewHistoryButton);
 
         // 初始化自动播放按钮 (位于历史记录按钮左侧)
         int autoPlayButtonWidth = 20;
         int autoPlayButtonHeight = 20;
+        int autoPlayButtonX = dialogBoxX + dialogBoxWidth - historyButtonWidth - historyButtonPadding - autoPlayButtonWidth - historyButtonPadding; // 修改X坐标
+        int autoPlayButtonY = dialogBoxY + dialogBoxHeight - autoPlayButtonHeight - historyButtonPadding; // 修改Y坐标
+
         this.autoPlayButton = Button.builder(Component.literal("▶"), (button) -> {
             toggleAutoPlay();
-        }).bounds(dialogBoxX + dialogBoxWidth - historyButtonWidth - historyButtonPadding - autoPlayButtonWidth - historyButtonPadding, 
-                  dialogBoxY + dialogBoxHeight - autoPlayButtonHeight - historyButtonPadding, 
-                  autoPlayButtonWidth, autoPlayButtonHeight).build();
+        }).bounds(autoPlayButtonX, autoPlayButtonY, autoPlayButtonWidth, autoPlayButtonHeight).build();
         this.addRenderableWidget(this.autoPlayButton);
         updateAutoPlayButtonText(); // 初始化按钮文本
         
