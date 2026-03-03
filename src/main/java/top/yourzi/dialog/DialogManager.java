@@ -7,7 +7,6 @@ import com.google.gson.JsonSyntaxException;
 import net.minecraft.client.Minecraft;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.ComponentUtils;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
@@ -56,7 +55,7 @@ public class DialogManager {
     private String currentDialogPlayerName;
 
     private DialogManager() {}
-    
+
     /**
      * 向玩家发送消息。
      */
