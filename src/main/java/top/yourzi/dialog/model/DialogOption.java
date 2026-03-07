@@ -37,7 +37,7 @@ public class DialogOption {
     // 选择该选项后执行的命令
     @Getter
     @Setter
-    @SerializedName("commands")
+    @SerializedName("command")
     private List<String> command;
 
     // 控制该选项是否可见的指令
