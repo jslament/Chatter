@@ -336,9 +336,9 @@ public class DialogScreen extends Screen {
         dialogBoxY = height - dialogBoxHeight - 20;
 
         // Button size
-        int buttonWidth = 48;
-        int buttonHeight = 48;
-        int spacing = 6;
+        int buttonWidth = 24;
+        int buttonHeight = 24;
+        int spacing = 3;
 
         // Move them to the RIGHT of the dialog box
         int buttonsX = dialogBoxX + dialogBoxWidth;
