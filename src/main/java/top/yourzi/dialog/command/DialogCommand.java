@@ -33,7 +33,7 @@ public class DialogCommand {
         
         // 注册 /dialog 命令
         dispatcher.register(
-            Commands.literal("dialog")
+            Commands.literal("chatter")
                 .requires(source -> source.hasPermission(2)) // 要求权限等级2 (OP)
                 .then(Commands.literal("show")
                     .then(Commands.argument("id", StringArgumentType.string())
@@ -56,7 +56,7 @@ public class DialogCommand {
             DialogSequence originalSequence = dialogManager.getDialogSequence(dialogId);
 
             if (originalSequence == null) {
-                source.sendFailure(Component.literal("Dialog with ID '" + dialogId + "' not found."));
+                source.sendFailure(Component.literal("Chatter dialog with ID '" + dialogId + "' not found."));
                 return 0;
             }
 
