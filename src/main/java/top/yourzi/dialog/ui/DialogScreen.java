@@ -42,6 +42,7 @@ import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.client.gui.screens.ConfirmScreen;
 import top.yourzi.dialog.util.STBBackendImage;
+import top.yourzi.dialog.util.ComponentRevealUtil;
 
 /**
  * 对话界面，用于显示对话框和立绘
@@ -750,20 +751,25 @@ public class DialogScreen extends Screen {
                     return;
                 }
             }
-            
+
             List<net.minecraft.util.FormattedCharSequence> lines;
             if (textFullyDisplayed) {
                 lines = font.split(dialogEntry.getText(Minecraft.getInstance().level.registryAccess(), playerName), maxWidth);
             } else {
-                String animatedString = rawText.substring(0, Math.min(currentCharIndex, rawText.length()));
-                if (animatedString.isEmpty()) {
+                if (currentCharIndex <= 0) {
                     lines = java.util.Collections.emptyList();
                 } else {
-                    Component animatedTextComponent = Component.literal(animatedString);
+                    Component animatedTextComponent = ComponentRevealUtil.reveal(
+                            dialogEntry.getText(
+                                    Minecraft.getInstance().level.registryAccess(),
+                                    playerName
+                            ),
+                            currentCharIndex
+                    );
                     lines = font.split(animatedTextComponent, maxWidth);
                 }
             }
-            
+
             for (net.minecraft.util.FormattedCharSequence line : lines) {
                 guiGraphics.drawString(font, line, textX, textY, Config.DIALOG_TEXT_COLOR.get());
                 textY += font.lineHeight;
