@@ -431,8 +431,8 @@ public class DialogScreen extends Screen {
             return;
         }
         
-        int buttonWidth = 200;
-        int buttonHeight = 20;
+        int buttonWidth = 192;
+        int buttonHeight = 31;
         WidgetSprites sprites;
 
         if (Config.USE_CUSTOM_BUTTON_TEXTURE.get()) {
