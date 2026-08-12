@@ -48,35 +48,34 @@ public class DialogCommand {
     /**
      * 显示指定ID的对话。
      */
-    private static int showDialog(CommandContext<CommandSourceStack> context, String dialogId) {
+    private static int showDialog(
+            CommandContext<CommandSourceStack> context,
+            String dialogId
+    ) {
         CommandSourceStack source = context.getSource();
-        
-        if (source.getEntity() instanceof ServerPlayer player) {
-            DialogManager dialogManager = DialogManager.getInstance();
-            DialogSequence originalSequence = dialogManager.getDialogSequence(dialogId);
 
-            if (originalSequence == null) {
-                source.sendFailure(Component.literal("Chatter dialog with ID '" + dialogId + "' not found."));
-                return 0;
-            }
-
-            // 为玩家创建特定对话序列 (过滤选项)
-            DialogSequence playerSpecificSequence = dialogManager.createPlayerSpecificSequence(originalSequence, player, source.getServer());
-            if (playerSpecificSequence == null) {
-                 source.sendFailure(Component.literal("Failed to create player-specific dialog for ID '" + dialogId + "'."));
-                 return 0;
-            }
-
-            // 将过滤后的对话序列转换为JSON
-            String dialogJson = DialogManager.GSON.toJson(playerSpecificSequence);
-
-            // 发送包含完整对话数据的包
-            top.yourzi.dialog.network.NetworkHandler.sendShowDialogToPlayer(player, dialogId, dialogJson);
-            return 1;
-        } else {
-            source.sendFailure(Component.translatable("dialog.command.show.player_only"));
+        if (!(source.getEntity() instanceof ServerPlayer player)) {
+            source.sendFailure(
+                    Component.translatable("dialog.command.show.player_only")
+            );
             return 0;
         }
+
+        boolean success = DialogManager.getInstance()
+                .showDialogToPlayer(player, dialogId);
+
+        if (!success) {
+            source.sendFailure(
+                    Component.literal(
+                            "Chatter dialog with ID '" +
+                                    dialogId +
+                                    "' could not be shown."
+                    )
+            );
+            return 0;
+        }
+
+        return 1;
     }
     
     /**

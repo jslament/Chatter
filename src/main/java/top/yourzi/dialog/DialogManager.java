@@ -257,6 +257,74 @@ public class DialogManager {
     }
 
     /**
+     * Opens a dialogue for a specific server player.
+     *
+     * This is the public API that other mods can use to start a dialogue
+     * without executing the /chatter command.
+     *
+     * @param player The player who should see the dialogue.
+     * @param dialogId The ID of the dialogue to display.
+     * @return true if the dialogue was successfully sent to the player.
+     */
+    public boolean showDialogToPlayer(ServerPlayer player, String dialogId) {
+        if (player == null || dialogId == null || dialogId.isEmpty()) {
+            return false;
+        }
+
+        DialogSequence originalSequence = getDialogSequence(dialogId);
+
+        if (originalSequence == null) {
+            Dialog.LOGGER.warn(
+                    "Attempted to show unknown dialogue '{}' to player {}.",
+                    dialogId,
+                    player.getName().getString()
+            );
+            return false;
+        }
+
+        MinecraftServer server = player.getServer();
+
+        if (server == null) {
+            Dialog.LOGGER.warn(
+                    "Could not show dialogue '{}' because player {} has no server.",
+                    dialogId,
+                    player.getName().getString()
+            );
+            return false;
+        }
+
+        // Create a copy filtered for this specific player.
+        DialogSequence playerSpecificSequence =
+                createPlayerSpecificSequence(
+                        originalSequence,
+                        player,
+                        server
+                );
+
+        if (playerSpecificSequence == null) {
+            Dialog.LOGGER.warn(
+                    "Failed to create player-specific dialogue '{}' for player {}.",
+                    dialogId,
+                    player.getName().getString()
+            );
+            return false;
+        }
+
+        // Convert the filtered dialogue to JSON.
+        String dialogJson = GSON.toJson(playerSpecificSequence);
+
+        // Send it directly to the player.
+        NetworkHandler.sendShowDialogToPlayer(
+                player,
+                dialogId,
+                dialogJson
+        );
+
+        return true;
+    }
+
+
+    /**
      * (服务端) 为特定玩家创建一个对话序列的副本，并根据玩家权限和visibility_command过滤选项。
      * @param originalSequence 原始对话序列。
      * @param player 执行命令的玩家。
